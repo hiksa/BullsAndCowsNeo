@@ -1,10 +1,12 @@
 ﻿using BullsAndCowsNeo.Common;
+using BullsAndCowsNeo.Dtos;
 using BullsAndCowsNeo.Web.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Neo;
 using Neo.Core;
 using Neo.SmartContract;
 using Neo.VM;
+using Newtonsoft.Json;
 using System;
 using System.Linq;
 
@@ -41,15 +43,9 @@ namespace BullsAndCowsNeo.Web.Infra
             {
                 result = string.Empty;
                 var firstNotificationName = firstNotification.State.GetArray()[0].GetByteArray().ToHexString().HexStringToString();
-
-                foreach (var item in firstNotification.State.GetArray())
-                {
-                    var text = item.GetByteArray().ToHexString().HexStringToString();
-                    if (text != firstNotificationName)
-                    {
-                        result += $"[{text}] ";
-                    }
-                }
+                var stringList = firstNotification.State.GetArray().ToStringList();
+                var stringsListObject = stringList.CreateObject<MultipleParamsActionObject>();
+                result = JsonConvert.SerializeObject(stringsListObject);
             }
 
             await _contractHub.Clients.All.SendAsync("UpdateContractInfo", "Contract result : ", result.Trim());

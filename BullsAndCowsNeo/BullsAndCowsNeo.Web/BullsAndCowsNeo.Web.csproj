@@ -19,6 +19,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\BullsAndCowsNeo.Common\BullsAndCowsNeo.Common.csproj" />
+    <ProjectReference Include="..\BullsAndCowsNeo.Dtos\BullsAndCowsNeo.Dtos.csproj" />
     <ProjectReference Include="..\BullsAndCowsNeo.ViewModels\BullsAndCowsNeo.ViewModels.csproj" />
   </ItemGroup>
 
