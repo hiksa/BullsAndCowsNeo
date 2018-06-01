@@ -1,4 +1,5 @@
-﻿using BullsAndCowsNeo.Web.Hubs;
+﻿using BullsAndCowsNeo.Common;
+using BullsAndCowsNeo.Web.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Neo;
 using Neo.Core;
@@ -24,29 +25,52 @@ namespace BullsAndCowsNeo.Web.Infra
         {
             Blockchain.Notify += Blockchain_Notify;
             Blockchain.PersistCompleted += UpdateBlockCount_Completed;
-            Blockchain.PersistCompleted += UpdateContractValue_Completed;
+            //Blockchain.PersistCompleted += UpdateContractValue_Completed;
         }
 
-        private void Blockchain_Notify(object sender, BlockNotifyEventArgs e)
+        private async void Blockchain_Notify(object sender, BlockNotifyEventArgs e)
         {
+            string result = "no result";
+
+            UInt160 script_hash = UInt160.Parse("0x7056c04071babb493c0e7a1eb24fd28207300ddf");
             var notifications = e.Notifications;
+            var notification = notifications.Where(n => n.ScriptHash == script_hash);
+            var firstNotification = notification.FirstOrDefault();
+
+            if (firstNotification != null)
+            {
+                result = string.Empty;
+                var firstNotificationName = firstNotification.State.GetArray()[0].GetByteArray().ToHexString().HexStringToString();
+
+                foreach (var item in firstNotification.State.GetArray())
+                {
+                    var text = item.GetByteArray().ToHexString().HexStringToString();
+                    if (text != firstNotificationName)
+                    {
+                        result += $"[{text}] ";
+                    }
+                }
+            }
+
+            await _contractHub.Clients.All.SendAsync("UpdateContractInfo", "Contract result : ", result.Trim());
         }
 
         private async void UpdateContractValue_Completed(object sender, Block e)
         {
-            string result = null;
-            UInt160 script_hash = UInt160.Parse("0x27e6fd6a60288c0392bd108a9d7cd4358f4e22ef");
-            ContractState contract = Blockchain.Default.GetContract(script_hash);
-            var parameters = contract.ParameterList.Select(p => new ContractParameter(p)).ToArray();
+            //string result = null;
+            //UInt160 script_hash = UInt160.Parse("0xc89c876fdeebe661686e816658d124808d84688e");
+            //ContractState contract = Blockchain.Default.GetContract(script_hash);
+            //var parameters = contract.ParameterList.Select(p => new ContractParameter(p)).ToArray();
 
-            parameters[0].Value = "op1";
-            using (ScriptBuilder sb = new ScriptBuilder())
-            {
-                sb.EmitAppCall(script_hash, parameters);
-                result = sb.ToArray().ToHexString();
-            }
+            //parameters[0].Value = "get";
+            //parameters[1].Value = "op1";
+            //using (ScriptBuilder sb = new ScriptBuilder())
+            //{
+            //    sb.EmitAppCall(script_hash, parameters);
+            //    result = sb.ToArray().ToHexString();
+            //}
 
-            await _contractHub.Clients.All.SendAsync("UpdateContractInfo", "Contract result : ", result);
+            //await _contractHub.Clients.All.SendAsync("UpdateContractInfo", "Contract result : ", result);
         }
 
         private async void UpdateBlockCount_Completed(object sender, Block e)
