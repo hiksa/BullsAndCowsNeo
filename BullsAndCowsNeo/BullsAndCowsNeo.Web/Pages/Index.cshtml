@@ -4,37 +4,17 @@
     ViewData["Title"] = "Home page";
 }
 
-<div class="container">
-    <div class="row">
-        <div class="col-md-12 text-center">
-            <h1 id="contractInfo"></h1>
-        </div>
-    </div>
-    <div class="row">&nbsp;</div>
-    <div class="row">
-        <div class="col-6">&nbsp;</div>
-        <div class="col-6">
-            User..........<input type="text" id="userInput" />
-            <br />
-            Message...<input type="text" id="messageInput" />
-            <input type="button" id="sendButton" value="Send Message" />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12">
-            <hr />
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-6">&nbsp;</div>
-        <div class="col-6">
-            <ul id="messagesList"></ul>
-        </div>
-    </div>
-</div>
+<div class="game"></div>
 
 @section Scripts{
-    <script src="~/lib/signalr/signalr.js"></script>
-    <script src="~/js/chat.js"></script>
-    <script src="~/js/contract.js"></script>
+    @*<script src="~/js/chat.js"></script>
+        <script src="~/js/contract.js"></script>
+        <script src="~/lib/signalr/signalr.js"></script>*@
+
+    <script src="~/lib/phaser/phaser.min.js"></script>
+    <script src="~/lib/phaser/phaser-input.js"></script>
+    <script src="~/js/game/States/titleState.js"></script>
+    <script src="~/js/game/States/queueState.js"></script>
+    <script src="~/js/game/States/gameState.js"></script>
+    <script src="~/js/game/game.js"></script>
 }
