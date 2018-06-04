@@ -56,10 +56,12 @@ namespace BullsAndCowsNeo.Web
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDefaultIdentity<IdentityUser>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
-            
+
             services.AddSingleton<NotificationEngine>();
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+
+            services.AddCors();
             services.AddSignalR();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,10 +78,17 @@ namespace BullsAndCowsNeo.Web
                 app.UseHsts();
             }
 
+            // Shows UseCors with CorsPolicyBuilder.
+            app.UseCors(builder => {
+                builder
+                    .WithOrigins("http://localhost:8111", "http://localhost:4200")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader()
+                    .AllowCredentials();
+            });
             //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
-            app.UseCorsMiddleware();
 
             app.UseSignalR(routes =>
             {
