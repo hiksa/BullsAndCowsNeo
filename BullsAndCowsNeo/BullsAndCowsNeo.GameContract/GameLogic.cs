@@ -1,4 +1,5 @@
 ﻿using BullsAndCowsNeo.GameContract.Models;
+using BullsAndCowsNeo.GameContract.Types;
 using Neo.SmartContract.Framework.Services.Neo;
 
 namespace BullsAndCowsNeo.GameContract

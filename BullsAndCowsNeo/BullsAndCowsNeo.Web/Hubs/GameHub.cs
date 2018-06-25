@@ -17,67 +17,42 @@ namespace BullsAndCowsNeo.Web.Hubs
             _gamesEngine = gamesEngine;
         }
 
-        public async Task Join(string test)
+        public async Task Join(string address)
         {
-            var gameguid = Guid.NewGuid().ToString();
             if (_gamesEngine.GamesWaitingList.Count > 0)
             {
-                var waitingItem = _gamesEngine.GamesWaitingList.FirstOrDefault(kvp => kvp.Key == Context.ConnectionId);
-                if (waitingItem.Key != null)
+                if (_gamesEngine.GamesWaitingList.First().Address == address)
                 {
-                    gameguid = waitingItem.Value;
+                    return;
                 }
-                else
+
+                var gameguid = Guid.NewGuid().ToString();
+                var game = new Game
                 {
-                    gameguid = _gamesEngine.GamesWaitingList.First().Value;
-                    _gamesEngine.GamesWaitingList.Add(new KeyValuePair<string, string>(Context.ConnectionId, gameguid));
-                }
+                    Id = gameguid,
+                    Player1 = _gamesEngine.GamesWaitingList.First(),
+                    Player2 = new Player
+                    {
+                        ConnectionId = Context.ConnectionId,
+                        Address = address
+                    }
+                };
+
+                _gamesEngine.GamesWaitingList.Remove(game.Player1);
+                _gamesEngine.GamesList.Add(game);
+
+                await Groups.AddToGroupAsync(game.Player1.ConnectionId, gameguid);
+                await Groups.AddToGroupAsync(game.Player2.ConnectionId, gameguid);
+                await Clients.All.SendAsync("MatchFound", gameguid);
             }
             else
             {
-                _gamesEngine.GamesWaitingList.Add(
-                    new KeyValuePair<string, string>(Context.ConnectionId, gameguid));
-            }
-            await Groups.AddToGroupAsync(Context.ConnectionId, gameguid);
-            await Clients.All.SendAsync("JoinRoom", gameguid);
-        }
-
-        public async Task SetUserNumber(string number)
-        {
-            if (number.Length > 4)
-            {
-                await Clients.User(Context.ConnectionId).SendAsync("InvalidNumber", "Length");
-            }
-            else
-            {
-                var groupId = _gamesEngine.GetGameIdByConnectionId(Context.ConnectionId);
-                var result = _gamesEngine.SetUserNumber(Context.ConnectionId, number);
-
-                await Clients.Group(groupId).SendAsync("NumberValidated", result);
-            }
-        }
-
-
-        public async Task MakeAGuess(string number)
-        {
-            if (number.Length > 4)
-            {
-                await Clients.User(Context.ConnectionId).SendAsync("InvalidNumber", "Length");
-            }
-            else
-            {
-                var groupId = _gamesEngine.GetGameIdByConnectionId(Context.ConnectionId);
-                var result = _gamesEngine.MakeAGuess(Context.ConnectionId, number);
-                if (groupId != null)
+                _gamesEngine.GamesWaitingList.Add(new Player
                 {
-                    await Clients.Group(groupId).SendAsync("TurnResult", result);
-                }
+                    ConnectionId = Context.ConnectionId,
+                    Address = address
+                });
             }
-        }
-
-        public async Task Leave(string test)
-        {
-            await Clients.All.SendAsync("LeaveRoom", test);
         }
 
         public async Task SendMessageInGroup(string group, string message)

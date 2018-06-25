@@ -1,6 +1,8 @@
 ﻿using BullsAndCowsNeo.Common;
 using BullsAndCowsNeo.Dtos;
+using BullsAndCowsNeo.GameContract.Types;
 using BullsAndCowsNeo.Web.Hubs;
+using BullsAndCowsNeo.Web.Infra.NotificationModels;
 using Microsoft.AspNetCore.SignalR;
 using Neo;
 using Neo.Core;
@@ -17,71 +19,54 @@ namespace BullsAndCowsNeo.Web.Infra
 {
     public class NotificationEngine
     {
-        private readonly IHubContext<ChatHub> _chatHub;
-        private readonly IHubContext<ContractHub> _contractHub;
-        private List<IPEndPoint> _allNodes = new List<IPEndPoint>();
+        private readonly GameEngine _gameEngine;
+        private readonly IHubContext<GameHub> _gameHubContext;
 
-        public NotificationEngine(IHubContext<ChatHub> hubContext, IHubContext<ContractHub> contractHub)
+        public NotificationEngine(GameEngine gameEngine, IHubContext<GameHub> gameHubContext)
         {
-            _chatHub = hubContext;
-            _contractHub = contractHub;
+            _gameEngine = gameEngine;
+            _gameHubContext = gameHubContext;
         }
 
         public async void Init()
         {
-            //LocalNode.InventoryReceived += LocalNode_InventoryReceived;
-            //LocalNode.InventoryReceiving += LocalNode_InventoryReceiving;
-            //Blockchain.Notify += Blockchain_Notify;
-            //Blockchain.PersistCompleted += UpdateBlockCount_Completed;
-            //Blockchain.PersistCompleted += UpdateContractValue_Completed;
-        }
-
-        private async void LocalNode_InventoryReceiving(object sender, InventoryReceivingEventArgs e)
-        {
-            var badpeers = Startup.localNode.GetBadPeers();
-            var nodes = Startup.localNode.GetRemoteNodes();
-            var unconnected = Startup.localNode.GetUnconnectedPeers();
-            foreach (var node in nodes)
-            {
-                var existingNode = _allNodes.FirstOrDefault(n => n.Address == node.RemoteEndpoint.Address && n.Port == node.RemoteEndpoint.Port);
-                if (existingNode == null)
-                {
-                    _allNodes.Add(node.RemoteEndpoint);
-                }
-            }
-
-            await _chatHub.Clients.All.SendAsync("ReceiveMessage", "[SYSTEM] : ", $"{DateTime.Now.ToString("hh:ss")} -> InventoryReceivingEventArgs : {e.ToString()}");
-        }
-
-        private async void LocalNode_InventoryReceived(object sender, IInventory e)
-        {
-            await _chatHub.Clients.All.SendAsync("ReceiveMessage", "[SYSTEM] : ", $"{DateTime.Now.ToString("hh:ss")} -> IInventory {e.ToString()}");
+            Blockchain.Notify += Blockchain_Notify;
         }
 
         private async void Blockchain_Notify(object sender, BlockNotifyEventArgs e)
         {
-            string result = "no result";
+            UInt160 script_hash = UInt160.Parse("0x0031e2299a646b9d53ad644e868d84d5b538e8fa");
 
-            UInt160 script_hash = UInt160.Parse("0x7056c04071babb493c0e7a1eb24fd28207300ddf");
-            var notifications = e.Notifications;
-            var notification = notifications.Where(n => n.ScriptHash == script_hash);
-            var firstNotification = notification.FirstOrDefault();
+            var notifications = e.Notifications.Where(n => n.ScriptHash == script_hash);
 
-            if (firstNotification != null)
+            foreach (var item in notifications)
             {
-                result = string.Empty;
-                var firstNotificationName = firstNotification.State.GetArray()[0].GetByteArray().ToHexString().HexStringToString();
-                var stringList = firstNotification.State.GetArray().ToStringList();
-                var stringsListObject = stringList.CreateObject<MultipleParamsActionObject>();
-                result = JsonConvert.SerializeObject(stringsListObject);
+                var notificationType = item.State.GetArray()[0].GetByteArray().ToHexString().HexStringToString();
+                if (notificationType == NotificationTypes.GameJoined)
+                {
+                    var gameJoined = item.State.GetArray().ToStringList().CreateObject<GameJoined>();
+                    var game = _gameEngine.JoinGame(gameJoined);
+                    var connectionId = game.GetConnectionId(gameJoined.Address);
+
+                    await _gameHubContext.Clients.User(connectionId).SendAsync(notificationType, true);
+
+                    if (game.IsReady)
+                    {
+                        await _gameHubContext.Clients.Group(gameJoined.GameId).SendAsync(NotificationTypes.GameStarted, true);
+                    }
+                }
             }
 
-            await _contractHub.Clients.All.SendAsync("UpdateContractInfo", "Contract result : ", result.Trim());
-        }
+            //var firstNotification = notification.FirstOrDefault();
 
-        private async void UpdateBlockCount_Completed(object sender, Block e)
-        {
-            await _chatHub.Clients.All.SendAsync("ReceiveMessage", "[SYSTEM] : ", $"{DateTime.Now.ToString("hh:ss")} -> ${Blockchain.Default.Height}");
+            //if (firstNotification != null)
+            //{
+            //    result = string.Empty;
+            //    var firstNotificationName = firstNotification.State.GetArray()[0].GetByteArray().ToHexString().HexStringToString();
+            //    var stringList = firstNotification.State.GetArray().ToStringList();
+            //    var stringsListObject = stringList.CreateObject<MultipleParamsActionObject>();
+            //    result = JsonConvert.SerializeObject(stringsListObject);
+            //}
         }
     }
 }

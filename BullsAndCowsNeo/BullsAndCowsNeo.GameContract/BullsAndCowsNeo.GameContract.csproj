@@ -63,6 +63,12 @@
   <ItemGroup>
     <Content Include="Neo.ConvertTask.dll" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\BullsAndCowsNeo.GameContract.Types\BullsAndCowsNeo.GameContract.Types.csproj">
+      <Project>{e104c1e3-98bc-49a2-9f32-2bea5d3851b2}</Project>
+      <Name>BullsAndCowsNeo.GameContract.Types</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="Build.tasks" />
   <Target Name="AfterBuild">
