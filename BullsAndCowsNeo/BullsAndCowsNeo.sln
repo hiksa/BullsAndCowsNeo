@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParametersAndEventTest", "P
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BullsAndCowsNeo.Dtos", "BullsAndCowsNeo.Dtos\BullsAndCowsNeo.Dtos.csproj", "{CE7E8B61-8AE4-461E-8FC3-C34EB17CDD20}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BullsAndCowsNeo.GameContract", "BullsAndCowsNeo.GameContract\BullsAndCowsNeo.GameContract.csproj", "{F1450066-87A8-4E53-9C48-25BAA77D60A0}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EventsTestingServerContract", "EventsTestingServerContract\EventsTestingServerContract.csproj", "{DAF1F41E-11C3-4378-A9F1-F088D99D3FA5}"
 EndProject
 Global
@@ -53,6 +55,10 @@ Global
 		{DAF1F41E-11C3-4378-A9F1-F088D99D3FA5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAF1F41E-11C3-4378-A9F1-F088D99D3FA5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAF1F41E-11C3-4378-A9F1-F088D99D3FA5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1450066-87A8-4E53-9C48-25BAA77D60A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1450066-87A8-4E53-9C48-25BAA77D60A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1450066-87A8-4E53-9C48-25BAA77D60A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1450066-87A8-4E53-9C48-25BAA77D60A0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +69,7 @@ Global
 		{F986810F-140C-405B-975E-E53998EAA0E3} = {96394F47-3A51-41C2-8E8D-6881E64FF236}
 		{210BFEDF-E918-4326-BC35-A8D5DDA67285} = {4FFE1AD1-A1FE-46FB-9D52-F82AC6CC6578}
 		{CE7E8B61-8AE4-461E-8FC3-C34EB17CDD20} = {21F223AF-F583-4D81-A99A-88B8620BC8DD}
+		{F1450066-87A8-4E53-9C48-25BAA77D60A0} = {4FFE1AD1-A1FE-46FB-9D52-F82AC6CC6578}
 		{DAF1F41E-11C3-4378-A9F1-F088D99D3FA5} = {4FFE1AD1-A1FE-46FB-9D52-F82AC6CC6578}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
