@@ -11,8 +11,7 @@ using System.Threading.Tasks;
 
 namespace BullsAndCowsNeo.Web.Controllers
 {
-    [Route("api/[controller]")]
-    public class ContractController : Controller
+    public class ContractController : BaseApiController
     {
         private readonly IHubContext<ContractHub> _contractHub;
 

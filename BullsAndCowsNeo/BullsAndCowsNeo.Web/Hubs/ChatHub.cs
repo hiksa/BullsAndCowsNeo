@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,7 +14,8 @@ namespace BullsAndCowsNeo.Web.Hubs
     {
         public async Task SendMessage(string user, string message)
         {
-            await Clients.All.SendMessage(user, message);
+            var asd = Context.ConnectionId;
+            var dsa = Clients.Caller;
         }
     }
 }

@@ -8,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace BullsAndCowsNeo.Web.Controllers
 {
-    [Route("api/[controller]")]
-    public class ValuesController : Controller
+    public class ValuesController : BaseApiController
     {
         private readonly IHubContext<ChatHub> context;
 
@@ -22,10 +21,10 @@ namespace BullsAndCowsNeo.Web.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            //var height = Neo.Core.Blockchain.Default.Height;
+            var height = Neo.Core.Blockchain.Default.Height;
 
-            //return new string[] { "value1", height.ToString() };
-            return new string[] { "value1" };
+            return new string[] { "value1", height.ToString() };
+            //return new string[] { "value1" };
         }
 
         // GET api/values/5
@@ -37,13 +36,10 @@ namespace BullsAndCowsNeo.Web.Controllers
 
         // POST api/values
         [HttpPost]
-        public async Task Post([FromBody]string value)
+        public async Task Post([FromBody]dynamic obj)
         {
-            UInt160 script_hash = UInt160.Parse("0xd2096944344fdeb8b6379d856d8361b1e4596ae0");
-            ContractState contract = Blockchain.Default.GetContract(script_hash);
-            var parameters = contract.ParameterList;
-
-            await context.Clients.All.SendAsync("ReceiveMessage", "Contract Name : ", contract.Name);
+            var value = (string)obj.value;
+            await context.Clients.All.SendAsync("ReceiveMessage", new { user = "Nekyv", value });
         }
 
         // PUT api/values/5

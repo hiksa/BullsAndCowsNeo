@@ -12,6 +12,7 @@ namespace BullsAndCowsNeo.Web.Hubs
     {
         public async Task UpdateContractInfo(string user, string message)
         {
+            var asd = Context.ConnectionId;
             await Clients.All.UpdateContractInfo(user, message);
         }
     }

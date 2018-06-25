@@ -58,6 +58,7 @@ namespace BullsAndCowsNeo.Web
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
             services.AddSingleton<NotificationEngine>();
+            services.AddSingleton<GameEngine>();
 
             services.AddCors();
             services.AddSignalR();
@@ -86,6 +87,7 @@ namespace BullsAndCowsNeo.Web
                     .AllowAnyHeader()
                     .AllowCredentials();
             });
+
             //app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseCookiePolicy();
@@ -95,6 +97,7 @@ namespace BullsAndCowsNeo.Web
                 routes.MapHub<ChatHub>("/chathub");
                 routes.MapHub<ContractHub>("/contracthub");
                 routes.MapHub<ValuesHub>("/hubs/values");
+                routes.MapHub<GameHub>("/hubs/game");
             });
 
             notificationEngine.Init();

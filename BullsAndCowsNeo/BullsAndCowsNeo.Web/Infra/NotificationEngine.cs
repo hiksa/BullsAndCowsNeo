@@ -4,11 +4,14 @@ using BullsAndCowsNeo.Web.Hubs;
 using Microsoft.AspNetCore.SignalR;
 using Neo;
 using Neo.Core;
+using Neo.Network;
 using Neo.SmartContract;
 using Neo.VM;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace BullsAndCowsNeo.Web.Infra
 {
@@ -16,6 +19,7 @@ namespace BullsAndCowsNeo.Web.Infra
     {
         private readonly IHubContext<ChatHub> _chatHub;
         private readonly IHubContext<ContractHub> _contractHub;
+        private List<IPEndPoint> _allNodes = new List<IPEndPoint>();
 
         public NotificationEngine(IHubContext<ChatHub> hubContext, IHubContext<ContractHub> contractHub)
         {
@@ -25,9 +29,33 @@ namespace BullsAndCowsNeo.Web.Infra
 
         public async void Init()
         {
-            Blockchain.Notify += Blockchain_Notify;
-            Blockchain.PersistCompleted += UpdateBlockCount_Completed;
+            //LocalNode.InventoryReceived += LocalNode_InventoryReceived;
+            //LocalNode.InventoryReceiving += LocalNode_InventoryReceiving;
+            //Blockchain.Notify += Blockchain_Notify;
+            //Blockchain.PersistCompleted += UpdateBlockCount_Completed;
             //Blockchain.PersistCompleted += UpdateContractValue_Completed;
+        }
+
+        private async void LocalNode_InventoryReceiving(object sender, InventoryReceivingEventArgs e)
+        {
+            var badpeers = Startup.localNode.GetBadPeers();
+            var nodes = Startup.localNode.GetRemoteNodes();
+            var unconnected = Startup.localNode.GetUnconnectedPeers();
+            foreach (var node in nodes)
+            {
+                var existingNode = _allNodes.FirstOrDefault(n => n.Address == node.RemoteEndpoint.Address && n.Port == node.RemoteEndpoint.Port);
+                if (existingNode == null)
+                {
+                    _allNodes.Add(node.RemoteEndpoint);
+                }
+            }
+
+            await _chatHub.Clients.All.SendAsync("ReceiveMessage", "[SYSTEM] : ", $"{DateTime.Now.ToString("hh:ss")} -> InventoryReceivingEventArgs : {e.ToString()}");
+        }
+
+        private async void LocalNode_InventoryReceived(object sender, IInventory e)
+        {
+            await _chatHub.Clients.All.SendAsync("ReceiveMessage", "[SYSTEM] : ", $"{DateTime.Now.ToString("hh:ss")} -> IInventory {e.ToString()}");
         }
 
         private async void Blockchain_Notify(object sender, BlockNotifyEventArgs e)
@@ -49,24 +77,6 @@ namespace BullsAndCowsNeo.Web.Infra
             }
 
             await _contractHub.Clients.All.SendAsync("UpdateContractInfo", "Contract result : ", result.Trim());
-        }
-
-        private async void UpdateContractValue_Completed(object sender, Block e)
-        {
-            //string result = null;
-            //UInt160 script_hash = UInt160.Parse("0xc89c876fdeebe661686e816658d124808d84688e");
-            //ContractState contract = Blockchain.Default.GetContract(script_hash);
-            //var parameters = contract.ParameterList.Select(p => new ContractParameter(p)).ToArray();
-
-            //parameters[0].Value = "get";
-            //parameters[1].Value = "op1";
-            //using (ScriptBuilder sb = new ScriptBuilder())
-            //{
-            //    sb.EmitAppCall(script_hash, parameters);
-            //    result = sb.ToArray().ToHexString();
-            //}
-
-            //await _contractHub.Clients.All.SendAsync("UpdateContractInfo", "Contract result : ", result);
         }
 
         private async void UpdateBlockCount_Completed(object sender, Block e)
