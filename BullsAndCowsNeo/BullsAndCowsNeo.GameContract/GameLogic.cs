@@ -124,7 +124,7 @@ namespace BullsAndCowsNeo.GameContract
                     return false;
                 }
 
-                var guessResult = GetGuessResult(game.FirstPlayerNumber, number);
+                var guessResult = GameLogic.GetGuessResult(game.FirstPlayerNumber, number);
                 if (game.SecondPlayerNumber == number)
                 {
                     game.State = GameState.FirstPlayerWon;

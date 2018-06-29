@@ -39,7 +39,14 @@ namespace BullsAndCowsNeo.Web.Infra.Game
             var game = this.GamesList.FirstOrDefault(g => g.Id == notification.GameId);
             if (game != null)
             {
-
+                if (game.Player1.Address == notification.Address)
+                {
+                    game.Player1.HasSelectedNumber = true;
+                }
+                else if (game.Player2.Address == notification.Address)
+                {
+                    game.Player2.HasSelectedNumber = true;
+                }
             }
 
             return game;
@@ -50,7 +57,14 @@ namespace BullsAndCowsNeo.Web.Infra.Game
             var game = this.GamesList.FirstOrDefault(g => g.Id == notification.GameId);
             if (game != null)
             {
-
+                if (game.Player1.Address == notification.Address && notification.Bulls == 4)
+                {
+                    game.Player1.HasWon = true;
+                }
+                else if (game.Player2.Address == notification.Address && notification.Bulls == 4)
+                {
+                    game.Player2.HasWon = true;
+                }
             }
 
             return game;

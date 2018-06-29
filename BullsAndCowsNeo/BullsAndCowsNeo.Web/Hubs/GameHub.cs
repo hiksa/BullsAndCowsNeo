@@ -1,4 +1,5 @@
 ﻿using BullsAndCowsNeo.Web.Infra;
+using BullsAndCowsNeo.Web.Infra.Game;
 using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Collections.Generic;
@@ -10,18 +11,18 @@ namespace BullsAndCowsNeo.Web.Hubs
 {
     public class GameHub : Hub
     {
-        private readonly GameEngine _gamesEngine;
+        private readonly GameEngine gamesEngine;
 
         public GameHub(GameEngine gamesEngine)
         {
-            _gamesEngine = gamesEngine;
+            this.gamesEngine = gamesEngine;
         }
 
         public async Task Join(string address)
         {
-            if (_gamesEngine.GamesWaitingList.Count > 0)
+            if (this.gamesEngine.GamesWaitingList.Count > 0)
             {
-                if (_gamesEngine.GamesWaitingList.First().Address == address)
+                if (this.gamesEngine.GamesWaitingList.First().Address == address)
                 {
                     return;
                 }
@@ -30,7 +31,7 @@ namespace BullsAndCowsNeo.Web.Hubs
                 var game = new Game
                 {
                     Id = gameguid,
-                    Player1 = _gamesEngine.GamesWaitingList.First(),
+                    Player1 = this.gamesEngine.GamesWaitingList.First(),
                     Player2 = new Player
                     {
                         ConnectionId = Context.ConnectionId,
@@ -38,8 +39,8 @@ namespace BullsAndCowsNeo.Web.Hubs
                     }
                 };
 
-                _gamesEngine.GamesWaitingList.Remove(game.Player1);
-                _gamesEngine.GamesList.Add(game);
+                this.gamesEngine.GamesWaitingList.Remove(game.Player1);
+                this.gamesEngine.GamesList.Add(game);
 
                 await Groups.AddToGroupAsync(game.Player1.ConnectionId, gameguid);
                 await Groups.AddToGroupAsync(game.Player2.ConnectionId, gameguid);
@@ -47,7 +48,7 @@ namespace BullsAndCowsNeo.Web.Hubs
             }
             else
             {
-                _gamesEngine.GamesWaitingList.Add(new Player
+                this.gamesEngine.GamesWaitingList.Add(new Player
                 {
                     ConnectionId = Context.ConnectionId,
                     Address = address

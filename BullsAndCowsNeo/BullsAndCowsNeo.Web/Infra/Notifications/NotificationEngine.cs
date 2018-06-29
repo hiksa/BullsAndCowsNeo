@@ -14,6 +14,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 
 namespace BullsAndCowsNeo.Web.Infra.Notifications
@@ -49,6 +50,7 @@ namespace BullsAndCowsNeo.Web.Infra.Notifications
                     var connectionId = game.GetConnectionId(notification.Address);
 
                     await this.gameHubContext.Clients.User(connectionId).SendAsync(notificationType, true);
+
                     if (game.IsReady)
                     {
                         await this.gameHubContext.Clients.Group(notification.GameId).SendAsync(NotificationTypes.GameStarted, true);
@@ -61,6 +63,11 @@ namespace BullsAndCowsNeo.Web.Infra.Notifications
                     var connectionId = game.GetConnectionId(notification.Address);
 
                     await this.gameHubContext.Clients.User(connectionId).SendAsync(notificationType, true);
+
+                    if (game.HaveSelectedNumbers)
+                    {
+                        await this.gameHubContext.Clients.Group(notification.GameId).SendAsync("Player turn", game.Player1.Address);
+                    }
                 }
                 else if (notificationType == NotificationTypes.NumberGuessed)
                 {
@@ -69,8 +76,16 @@ namespace BullsAndCowsNeo.Web.Infra.Notifications
                     var connectionId = game.GetConnectionId(notification.Address);
                     var opponentsConnectionId = game.GetOpponentsConnectionId(notification.Address);
 
-                    await this.gameHubContext.Clients.User(connectionId).SendAsync(notificationType, true);
-                    await this.gameHubContext.Clients.User(opponentsConnectionId).SendAsync(NotificationTypes.OpponentGuessedNumber);
+                    await this.gameHubContext.Clients.Group(notification.GameId).SendAsync(notificationType, notification);
+
+                    if (game.IsFinished)
+                    {
+                        await this.gameHubContext.Clients.Group(notification.GameId).SendAsync("Player won", notification.Address);
+                    }
+                    else
+                    {
+                        await this.gameHubContext.Clients.Group(notification.GameId).SendAsync("Player turn", game.GetOpponentsAddress(notification.Address));
+                    }
                 }
             }
         }

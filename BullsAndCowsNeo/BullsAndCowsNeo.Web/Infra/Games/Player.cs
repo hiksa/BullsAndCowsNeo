@@ -7,5 +7,9 @@
         public string Address { get; set; }
 
         public bool HasJoined { get; set; }
+
+        public bool HasSelectedNumber { get; set; }
+
+        public bool HasWon { get; set; }
     }
 }
