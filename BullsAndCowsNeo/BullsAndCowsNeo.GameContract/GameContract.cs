@@ -34,27 +34,27 @@ namespace BullsAndCowsNeo.GameContract
                     if (args.Length != 2) return false;
 
                     var gameId = (string)args[0];
-                    var address = (byte[])args[1];
+                    var address = (string)args[1];
 
-                    return GameLogic.JoinGame(gameId.AsByteArray(), address);
+                    return GameLogic.JoinGame(gameId.AsByteArray(), address.AsByteArray());
                 }
                 else if (operation == "pick")
                 {
                     if (args.Length != 3) return false;
 
                     var gameId = (string)args[0];
-                    var address = (byte[])args[1];
+                    var address = (string)args[1];
                     var number = (string)args[2];
-                    return GameLogic.PickNumber(gameId.AsByteArray(), address, number);
+                    return GameLogic.PickNumber(gameId.AsByteArray(), address.AsByteArray(), number);
                 }
                 else if (operation == "guess")
                 {
                     if (args.Length != 3) return false;
 
                     var gameId = (string)args[0];
-                    var address = (byte[])args[1];
+                    var address = (string)args[1];
                     var number = (string)args[2];
-                    return GameLogic.GuessNumber(gameId.AsByteArray(), address, number);
+                    return GameLogic.GuessNumber(gameId.AsByteArray(), address.AsByteArray(), number);
                 }
             }
 

@@ -1,6 +1,8 @@
 using BullsAndCowsNeo.Web.Data;
 using BullsAndCowsNeo.Web.Hubs;
 using BullsAndCowsNeo.Web.Infra;
+using BullsAndCowsNeo.Web.Infra.Game;
+using BullsAndCowsNeo.Web.Infra.Notifications;
 using BullsAndCowsNeo.Web.Middlewares;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

@@ -1,8 +1,9 @@
-﻿namespace BullsAndCowsNeo.Web.Infra.NotificationModels
+﻿namespace BullsAndCowsNeo.Web.Infra.Notifications.Models
 {
-    public class GameJoined
+    public class GameJoinedNotification
     {
         public string GameId { get; set; }
+
         public string Address { get; set; }
     }
 }

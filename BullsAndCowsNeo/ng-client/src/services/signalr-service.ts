@@ -13,9 +13,9 @@ export class SignalRService {
   private _hubConnection: HubConnection;
 
   constructor() {
-    this.createConnection();
-    this.registerOnServerEvents();
-    this.startConnection();
+    // this.createConnection();
+    // this.registerOnServerEvents();
+    // this.startConnection();
   }
 
   sendChatMessage(message: ChatMessage) {

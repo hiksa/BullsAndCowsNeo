@@ -8,16 +8,6 @@ namespace EventsTestingServerContract
 {
     public class EventsTestsContract : SmartContract
     {
-
-        [DisplayName("single-param")]
-        public static event Action<string> SingleParamAction;
-
-        [DisplayName("multiple params")]
-        public static event Action<string, string, string, string> MultipleParamsAction;
-
-        [DisplayName("game action")]
-        public static event Action<string, string, string, bool> GameAction;
-
         public static byte[] Main(string op, string key, string value)
         {
             if (op == ParametersAndEventTestContractConstants.SET_METHOD)
@@ -30,11 +20,11 @@ namespace EventsTestingServerContract
             }
             if (op == ParametersAndEventTestContractConstants.SINGLE_PARAM_ACTION)
             {
-                SingleParamAction(value);
+                Runtime.Notify("single-param", value);
             }
             if (op == ParametersAndEventTestContractConstants.MULTIPLE_PARAM_ACTION)
             {
-                MultipleParamsAction("param1", "param2", "param3", "param444444444");
+                Runtime.Notify("multiple params", "param1", "param2", "param3", "param444444444");
             }
             if (op == ParametersAndEventTestContractConstants.GET_METHOD)
             {

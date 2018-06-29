@@ -16,14 +16,14 @@ namespace BullsAndCowsNeo.GameContract
         public static Game GetGame(byte[] gameId)
         {
             var key = KeysFactory.GameId(gameId);
-            var rawGame = Storage.Get(Storage.CurrentContext, key);
-            if (rawGame.Length == 0)
+            var raw = Storage.Get(Storage.CurrentContext, key);
+            if (raw.Length == 0)
             {
                 return new Game { Id = gameId, State = GameState.WaitingForPlayers };
             }
             else
             {
-                var deserialized = (object[])Helper.Deserialize(rawGame);
+                var deserialized = (object[])Helper.Deserialize(raw);
                 return (Game)(object)deserialized;
             }
         }

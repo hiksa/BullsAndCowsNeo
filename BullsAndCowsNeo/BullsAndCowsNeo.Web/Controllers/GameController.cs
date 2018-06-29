@@ -1,5 +1,6 @@
 ﻿using BullsAndCowsNeo.Web.Hubs;
 using BullsAndCowsNeo.Web.Infra;
+using BullsAndCowsNeo.Web.Infra.Game;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using System;
@@ -12,13 +13,13 @@ namespace BullsAndCowsNeo.Web.Controllers
 {
     public class GameController : BaseApiController
     {
-        private readonly IHubContext<GameHub> _roomHubCtx;
-        private readonly GameEngine _gamesPool;
+        private readonly IHubContext<GameHub> roomHubCtx;
+        private readonly GameEngine gamesPool;
 
         public GameController(IHubContext<GameHub> roomHubCtx, GameEngine gamesPool)
         {
-            _roomHubCtx = roomHubCtx;
-            _gamesPool = gamesPool;
+            this.roomHubCtx = roomHubCtx;
+            this.gamesPool = gamesPool;
         }
 
         //[HttpPost]
