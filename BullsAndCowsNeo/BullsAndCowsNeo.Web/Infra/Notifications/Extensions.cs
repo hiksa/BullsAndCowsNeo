@@ -11,9 +11,9 @@ namespace BullsAndCowsNeo.Web.Infra.Notifications
     public static class Extensions
     {
         public static T GetNotification<T>(this NotifyEventArgs args) =>
-            args.State.GetArray().ToStringList().CreateObject<T>();
+            (args.State as Neo.VM.Types.Array).ToStringList().CreateObject<T>();
 
         public static string GetNotificationType(this NotifyEventArgs args) =>
-            args.State.GetArray()[0].GetByteArray().ToHexString().HexStringToString();
+            (args.State as Neo.VM.Types.Array)[0].GetByteArray().ToHexString().HexStringToString();
     }
 }
