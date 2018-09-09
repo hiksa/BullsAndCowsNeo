@@ -1,13 +1,16 @@
 ﻿using BullsAndCowsNeo.GameContract.Models;
 using BullsAndCowsNeo.GameContract.Types;
+using Neo.SmartContract.Framework;
 using Neo.SmartContract.Framework.Services.Neo;
 
 namespace BullsAndCowsNeo.GameContract
 {
-    public static class GameLogic
+    public class GameLogic : SmartContract
     {
         public static bool JoinGame(byte[] gameId, byte[] address)
         {
+            Runtime.Notify("Called GameLogic.JoinGame", gameId, address);
+
             if (!Runtime.CheckWitness(address))
             {
                 Runtime.Notify(NotificationTypes.InvalidWitness, address);

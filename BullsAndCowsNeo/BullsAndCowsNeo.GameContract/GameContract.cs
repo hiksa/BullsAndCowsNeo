@@ -29,6 +29,8 @@ namespace BullsAndCowsNeo.GameContract
             }
             else if (Runtime.Trigger == TriggerType.Application)
             {
+                Runtime.Notify("Application triggered.", operation, args.Length);
+
                 if (operation == "join")
                 {
                     if (args.Length != 2) return false;
@@ -36,6 +38,7 @@ namespace BullsAndCowsNeo.GameContract
                     var gameId = (string)args[0];
                     var address = (string)args[1];
 
+                    Runtime.Notify("Calling GameLogic.JoinGame", gameId, address);
                     return GameLogic.JoinGame(gameId.AsByteArray(), address.AsByteArray());
                 }
                 else if (operation == "pick")

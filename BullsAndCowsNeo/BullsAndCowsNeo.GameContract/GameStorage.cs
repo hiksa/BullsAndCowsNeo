@@ -1,10 +1,11 @@
 ﻿using BullsAndCowsNeo.GameContract.Models;
+using Neo.SmartContract.Framework;
 using Neo.SmartContract.Framework.Services.Neo;
 using Helper = Neo.SmartContract.Framework.Helper;
 
 namespace BullsAndCowsNeo.GameContract
 {
-    public static class GameStorage
+    public class GameStorage : SmartContract
     {
         public static void SaveGame(Game game)
         {

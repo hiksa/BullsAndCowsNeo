@@ -2,7 +2,7 @@
 
 namespace BullsAndCowsNeo.GameContract
 {
-    public static class KeysFactory
+    public class KeysFactory : SmartContract
     {
         public static byte[] GameId(byte[] gameId) => 
             nameof(GameId).AsByteArray().Concat(gameId);
