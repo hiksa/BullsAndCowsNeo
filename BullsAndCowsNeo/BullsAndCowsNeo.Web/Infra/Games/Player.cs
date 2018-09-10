@@ -6,6 +6,8 @@
 
         public string Address { get; set; }
 
+        public string Number { get; set; }
+
         public bool HasJoined { get; set; }
 
         public bool HasSelectedNumber { get; set; }

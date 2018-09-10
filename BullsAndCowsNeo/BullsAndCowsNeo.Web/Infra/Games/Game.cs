@@ -14,6 +14,13 @@
 
         public bool IsFinished => this.Player1.HasWon || this.Player2.HasWon;
 
+        public Player GetPlayerByAddressOrDefault(string address) =>
+            this.Player1.Address == address
+                ? this.Player1
+                : this.Player2.Address == address
+                    ? this.Player2
+                    : null;
+
         public string GetConnectionId(string address)
         {
             if (this.Player1.Address == address)

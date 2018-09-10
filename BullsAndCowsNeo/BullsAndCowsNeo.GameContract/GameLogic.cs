@@ -9,8 +9,6 @@ namespace BullsAndCowsNeo.GameContract
     {
         public static bool JoinGame(byte[] gameId, byte[] address)
         {
-            Runtime.Notify("Called GameLogic.JoinGame", gameId, address);
-
             if (!Runtime.CheckWitness(address))
             {
                 Runtime.Notify(NotificationTypes.InvalidWitness, address);
@@ -33,6 +31,7 @@ namespace BullsAndCowsNeo.GameContract
             }
             else if (game.FirstPlayer == address)
             {
+                Runtime.Notify(NotificationTypes.GameJoined, gameId, address);
                 return true;
             }
 
@@ -46,6 +45,7 @@ namespace BullsAndCowsNeo.GameContract
             }
             else if (game.SecondPlayer == address)
             {
+                Runtime.Notify(NotificationTypes.GameJoined, gameId, address);
                 return true;
             }
 

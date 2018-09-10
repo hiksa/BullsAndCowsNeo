@@ -2,6 +2,7 @@
 using Neo.VM;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 
 namespace BullsAndCowsNeo.Common
@@ -46,11 +47,54 @@ namespace BullsAndCowsNeo.Common
             }
             return default(T);
         }
+        
+        public static T CreateObject<T>(this IEnumerable<StackItem> stackItems)
+        {
+            var instance = Activator.CreateInstance<T>();
+            var properties = instance
+                .GetType()
+                .GetProperties()
+                .Where(x => !x.GetCustomAttributes(typeof(NotMappedAttribute), true).Any())
+                .ToArray();
 
+            if (stackItems.Count() != properties.Count())
+            {
+                return instance;
+            }
+
+            for (int i = 0; i < stackItems.Count(); i++)
+            {
+                var property = properties[i];
+                var rawValue = stackItems.ElementAt(i).GetByteArray();
+                if (property.PropertyType == typeof(int))
+                {
+                    var valueAsString = rawValue.ToHexString().HexStringToString();
+                    if (int.TryParse(valueAsString, out int defaultInt))
+                    {
+                        SetPropertyValue(property.Name, instance, int.Parse(valueAsString));
+                    }
+                }
+                else if (property.PropertyType == typeof(byte[]))
+                {
+                    SetPropertyValue(property.Name, instance, rawValue);
+                }
+                else if (property.PropertyType == typeof(string))
+                {
+                    var valueAsString = rawValue.ToHexString().HexStringToString();
+                    SetPropertyValue(property.Name, instance, valueAsString);
+                }                    
+            }
+
+            return instance;
+        }
+        
         public static IEnumerable<string> ToStringList(this IEnumerable<StackItem> stackItems)
         {
             var result = stackItems.Skip(1).Select(si => si.GetByteArray().ToHexString().HexStringToString());
             return result;
         }
+
+        private static void SetPropertyValue(string propertyName, object instance, object value) =>
+            instance.GetType().GetProperty(propertyName).SetValue(instance, value);
     }
 }
