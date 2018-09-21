@@ -1,5 +1,6 @@
 ﻿using BullsAndCowsNeo.GameContract.Types;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Numerics;
 
 namespace BullsAndCowsNeo.Web.Infra.Notifications.Models
 {
@@ -11,9 +12,9 @@ namespace BullsAndCowsNeo.Web.Infra.Notifications.Models
 
         public string Number { get; set; }
 
-        public int Bulls { get; set; }
+        public BigInteger Bulls { get; set; }
 
-        public int Cows { get; set; }
+        public BigInteger Cows { get; set; }
 
         [NotMapped]
         public string Type => NotificationTypes.NumberGuessed;

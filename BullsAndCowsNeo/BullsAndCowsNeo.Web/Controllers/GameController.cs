@@ -21,31 +21,5 @@ namespace BullsAndCowsNeo.Web.Controllers
             this.roomHubCtx = roomHubCtx;
             this.gamesPool = gamesPool;
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> Join()
-        //{
-        //    //var groups = _roomHubCtx.Groups.AddToGroupAsync()
-        //    //var connectiondId = _roomHubCtx.Clients.
-        //    return Ok();
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> SetNumber()
-        //{
-        //    return Ok();
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> Guess()
-        //{
-        //    return Ok();
-        //}
-
-        //[HttpPost]
-        //public async Task<IActionResult> List()
-        //{
-        //    return Ok();
-        //}
     }
 }

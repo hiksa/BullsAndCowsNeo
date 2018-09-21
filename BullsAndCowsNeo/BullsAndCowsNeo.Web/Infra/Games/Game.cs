@@ -21,36 +21,18 @@
                     ? this.Player2
                     : null;
 
-        public string GetConnectionId(string address)
+        public string GetConnectionId(string address, bool opponentConnection = false)
         {
             if (this.Player1.Address == address)
             {
-                return this.Player1.ConnectionId;
+                return opponentConnection ? this.Player2.ConnectionId : this.Player1.ConnectionId;
             }
             else if (this.Player2.Address == address)
             {
-                return this.Player2.ConnectionId;
+                return opponentConnection ? this.Player1.ConnectionId : this.Player2.ConnectionId;
             }
-            else
-            {
-                return null;
-            }
-        }
 
-        public string GetOpponentsConnectionId(string address)
-        {
-            if (this.Player1.Address == address)
-            {
-                return this.Player2.ConnectionId;
-            }
-            else if (this.Player2.Address == address)
-            {
-                return this.Player1.ConnectionId;
-            }
-            else
-            {
-                return null;
-            }
+            return null;            
         }
 
         public string GetOpponentsAddress(string address)

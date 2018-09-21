@@ -1,9 +1,11 @@
-﻿namespace BullsAndCowsNeo.GameContract.Models
+﻿using System.Numerics;
+
+namespace BullsAndCowsNeo.GameContract.Models
 {
     public class GuessResult
     {
-        public int Bulls;
+        public BigInteger Bulls;
 
-        public int Cows;
+        public BigInteger Cows;
     }
 }

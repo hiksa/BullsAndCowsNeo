@@ -53,7 +53,6 @@
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\GameState.cs" />
     <Compile Include="Models\GuessResult.cs" />
-    <Compile Include="NotificationTypes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

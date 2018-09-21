@@ -12,24 +12,24 @@ namespace BullsAndCowsNeo.Web.Hubs
 {
     public class GameHub : Hub
     {
-        private readonly GameEngine gamesEngine;
+        private readonly GameEngine games;
 
-        public GameHub(GameEngine gamesEngine)
+        public GameHub(GameEngine games)
         {
-            this.gamesEngine = gamesEngine;
+            this.games = games;
         }
 
         public async Task Join(string address)
         {
-            if (this.gamesEngine.GamesWaitingList.Any())
+            if (this.games.Waiting.Any())
             {
-                if (this.gamesEngine.GamesWaitingList.First().Player1?.Address == address 
-                    || this.gamesEngine.GamesWaitingList.First().Player2?.Address == address)
+                if (this.games.Waiting.First().Player1?.Address == address 
+                    || this.games.Waiting.First().Player2?.Address == address)
                 {
                     return;
                 }
 
-                var game = this.gamesEngine.GamesWaitingList.First();
+                var game = this.games.Waiting.First();
                 var player = new Player
                 {
                     ConnectionId = Context.ConnectionId,
@@ -38,10 +38,10 @@ namespace BullsAndCowsNeo.Web.Hubs
 
                 game.Player2 = player;
 
-                this.gamesEngine.GamesWaitingList.Remove(game);
-                this.gamesEngine.GamesList.Add(game);
+                this.games.Waiting.Remove(game);
+                this.games.AllGames.Add(game);
                 await Groups.AddToGroupAsync(game.Player2.ConnectionId, game.Id);
-                await Clients.Group(game.Id).SendAsync(ClientSideHandlers.MatchFoundHandler, game.Id);
+                await Clients.Group(game.Id).SendAsync(ClientsideHandlers.MatchFoundHandler, game.Id);
             }
             else
             {
@@ -58,16 +58,16 @@ namespace BullsAndCowsNeo.Web.Hubs
                     Player1 = player
                 };
 
-                this.gamesEngine.GamesWaitingList.Add(game);
+                this.games.Waiting.Add(game);
                 await Groups.AddToGroupAsync(game.Player1.ConnectionId, game.Id);
-                await Clients.Groups(game.Id).SendAsync(ClientSideHandlers.GameCreatedHandler, game.Id);
+                await Clients.Groups(game.Id).SendAsync(ClientsideHandlers.GameCreatedHandler, game.Id);
             }
         }
 
         public async Task Pick(string address, string number)
         {
-            var game = this.gamesEngine
-                .GamesList
+            var game = this.games
+                .AllGames
                 .Where(x => !x.HaveSelectedNumbers && x.Player1.Address == address || x.Player2.Address == address)
                 .FirstOrDefault();
 
@@ -79,18 +79,18 @@ namespace BullsAndCowsNeo.Web.Hubs
 
                 if (game.HaveSelectedNumbers)
                 {
-                    await this.Clients.Group(game.Id).SendAsync(ClientSideHandlers.WaitingForNextBlockHandler);
+                    await this.Clients.Group(game.Id).SendAsync(ClientsideHandlers.WaitingForNextBlockHandler);
                 }
                 else
                 {
-                    await this.Clients.Group(game.Id).SendAsync(ClientSideHandlers.WaitingForOpponentHandler);
+                    await this.Clients.Group(game.Id).SendAsync(ClientsideHandlers.WaitingForOpponentHandler);
                 }
             }
         }
 
         public async Task Guess(string address, string number)
         {
-            var games = this.gamesEngine.GetActiveGamesByPlayerAddress(address);
+            var games = this.games.GetActiveGamesByPlayerAddress(address);
 
 
         }

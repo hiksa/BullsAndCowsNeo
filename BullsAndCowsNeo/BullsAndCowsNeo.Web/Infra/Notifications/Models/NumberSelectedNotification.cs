@@ -12,6 +12,6 @@ namespace BullsAndCowsNeo.Web.Infra.Notifications.Models
         public string Number { get; set; }
 
         [NotMapped]
-        public string Type => NotificationTypes.NumberPicked;
+        public string Type => NotificationTypes.NumberSelected;
     }
 }

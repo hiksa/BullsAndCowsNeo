@@ -10,13 +10,6 @@ namespace BullsAndCowsNeo.Web.Controllers
 {
     public class ValuesController : BaseApiController
     {
-        private readonly IHubContext<ChatHub> context;
-
-        public ValuesController(IHubContext<ChatHub> hub)
-        {
-            context = hub;
-        }
-
         // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()
@@ -39,7 +32,6 @@ namespace BullsAndCowsNeo.Web.Controllers
         public async Task Post([FromBody]dynamic obj)
         {
             var value = (string)obj.value;
-            await context.Clients.All.SendAsync("ReceiveMessage", new { user = "Nekyv", value });
         }
 
         // PUT api/values/5

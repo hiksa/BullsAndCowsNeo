@@ -29,11 +29,6 @@ namespace BullsAndCowsNeo.GameContract
                 Runtime.Notify(NotificationTypes.GameJoined, gameId, address);
                 return true;
             }
-            else if (game.FirstPlayer == address)
-            {
-                Runtime.Notify(NotificationTypes.GameJoined, gameId, address);
-                return true;
-            }
 
             if (game.SecondPlayer.Length == 0)
             {
@@ -43,17 +38,12 @@ namespace BullsAndCowsNeo.GameContract
                 Runtime.Notify(NotificationTypes.GameJoined, gameId, address);
                 return true;
             }
-            else if (game.SecondPlayer == address)
-            {
-                Runtime.Notify(NotificationTypes.GameJoined, gameId, address);
-                return true;
-            }
 
             Runtime.Notify(NotificationTypes.FailedToJoinGame, gameId, address);
             return false;
         }
 
-        public static bool PickNumber(byte[] gameId, byte[] address, string number)
+        public static bool SelectNumber(byte[] gameId, byte[] address, string number)
         {
             if (!Runtime.CheckWitness(address))
             {
@@ -63,14 +53,14 @@ namespace BullsAndCowsNeo.GameContract
 
             if (number.Length != 4)
             {
-                Runtime.Notify(NotificationTypes.FailedToPickNumber, gameId, address, number);
+                Runtime.Notify(NotificationTypes.FailedToSelectNumber, gameId, address, number);
                 return false;
             }
 
             var game = GameStorage.GetGame(gameId);
             if (game.State != GameState.SelectingNumbers)
             {
-                Runtime.Notify(NotificationTypes.FailedToPickNumber, gameId, address, number);
+                Runtime.Notify(NotificationTypes.FailedToSelectNumber, gameId, address, number);
                 return false;
             }
 
@@ -83,7 +73,7 @@ namespace BullsAndCowsNeo.GameContract
                 }
 
                 GameStorage.SaveGame(game);
-                Runtime.Notify(NotificationTypes.NumberPicked, gameId, address, number);
+                Runtime.Notify(NotificationTypes.NumberSelected, gameId, address, number);
                 return true;
             }
 
@@ -96,11 +86,11 @@ namespace BullsAndCowsNeo.GameContract
                 }
 
                 GameStorage.SaveGame(game);
-                Runtime.Notify(NotificationTypes.NumberPicked, gameId, address, number);
+                Runtime.Notify(NotificationTypes.NumberSelected, gameId, address, number);
                 return true;
             }
 
-            Runtime.Notify(NotificationTypes.FailedToPickNumber, gameId, address, number);
+            Runtime.Notify(NotificationTypes.FailedToSelectNumber, gameId, address, number);
             return false;
         }
 
@@ -152,7 +142,7 @@ namespace BullsAndCowsNeo.GameContract
                     return false;
                 }
 
-                var guessResult = GetGuessResult(game.FirstPlayerNumber, number);
+                var guessResult = GameLogic.GetGuessResult(game.FirstPlayerNumber, number);
                 if (game.FirstPlayerNumber == number)
                 {
                     game.State = GameState.SecondPlayerWon;
@@ -185,7 +175,7 @@ namespace BullsAndCowsNeo.GameContract
             {
                 if (number[i] == guess[i])
                 {
-                    result.Bulls++;
+                    result.Bulls += 1;
                     isGuessVisited[i] = true;
                     isNumVisited[i] = true;
                 }
@@ -197,7 +187,7 @@ namespace BullsAndCowsNeo.GameContract
                 {
                     if (i != j && !isNumVisited[j] && !isGuessVisited[i] && guess[i] == number[j])
                     {
-                        result.Cows++;
+                        result.Cows += 1;
                         isGuessVisited[i] = true;
                         isNumVisited[j] = true;
                     }
